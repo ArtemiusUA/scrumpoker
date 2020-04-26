@@ -1,0 +1,28 @@
+version: "3.7"
+
+volumes:
+  redis_data:
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+  web:
+    container_name: web
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+    user: "1000:1000"
+    volumes:
+      - .:/web
+    depends_on:
+      - redis
+    ports:
+      - 8080:8000

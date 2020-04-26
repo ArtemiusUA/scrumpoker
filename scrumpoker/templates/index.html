@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block js %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<form action="/room" method="POST">
+<button type="submit">Create room</button>
+</form>
+{% endblock %}

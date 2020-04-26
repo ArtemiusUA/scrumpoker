@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{{ super() }}
+{{ room }}
+<div id="content"></div>
+{% endblock %}
+{% block js %}
+{{ super() }}
+<script>
+    const roomId = {{ room.id }}
+</script>
+<script src="/static/js/room.js"></script>
+{% endblock %}
