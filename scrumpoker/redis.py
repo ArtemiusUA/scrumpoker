@@ -69,10 +69,7 @@ async def notify_model_changed(instance: BaseModel):
 
 async def listen():
     ch = await get_channel()
-    try:
-        while await ch.wait_message():
-            channel, data = await ch.get_json()
-            event = Event(type=channel.decode(), data=data)
-            await dispatch(event)
-    except Exception as e:
-        print(f"Listener issue: {e}")
+    while await ch.wait_message():
+        channel, data = await ch.get_json()
+        event = Event(type=channel.decode(), data=data)
+        await dispatch(event)
