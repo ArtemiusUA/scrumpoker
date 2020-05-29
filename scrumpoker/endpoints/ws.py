@@ -7,6 +7,7 @@ from starlette.routing import WebSocketRoute
 from starlette.websockets import WebSocket
 
 from scrumpoker.events import dispatch
+from scrumpoker.events.consts import WSIn, WSOut
 from scrumpoker.models.events import Event
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class WS(WebSocketEndpoint):
         connections[ident.room_id].append(websocket)
         await dispatch(
             Event(
-                type="connect",
+                type=WSIn.CONNECT,
                 data=dict(room_id=ident.room_id, session_id=ident.session_id),
             )
         )
@@ -40,7 +41,7 @@ class WS(WebSocketEndpoint):
         connections[idents.room_id].remove(websocket)
         await dispatch(
             Event(
-                type="disconnect",
+                type=WSIn.DISCONNECT,
                 data=dict(room_id=idents.room_id, session_id=idents.session_id),
             )
         )
@@ -51,7 +52,7 @@ class WS(WebSocketEndpoint):
             event = Event(**data)
         except ValidationError as e:
             await websocket.send_json(
-                Event(type="validation_error", data={"info": str(e)}).dict()
+                Event(type=WSOut.VALIDATION_ERROR, data={"info": str(e)}).dict()
             )
             return
         event.data["room_id"] = idents.room_id

@@ -4,7 +4,7 @@ import aioredis
 from pydantic import BaseModel
 
 from scrumpoker.conf import settings
-from scrumpoker.events import dispatch
+from scrumpoker.events import consts, dispatch
 from scrumpoker.models.events import Event
 
 _rc = None
@@ -42,7 +42,7 @@ async def get_channel():
     global _ch
     if _ch is None:
         conn = await get_listener()
-        results = await conn.psubscribe("model_change:*")
+        results = await conn.subscribe("model_change")
         _ch = results[0]
     return _ch
 
@@ -63,12 +63,18 @@ async def read_model(instance: BaseModel):
 
 async def notify_model_changed(instance: BaseModel):
     rc = await get_connection()
-    await rc.publish(f"model_change:{instance.__class__.__name__}", instance.json())
+    await rc.publish(
+        consts.Redis.MODEL_CHANGE,
+        Event(
+            type=consts.Redis.MODEL_CHANGE,
+            data={"model": instance.__class__.__name__, "id": instance.id},
+        ).json(),
+    )
 
 
 async def listen():
     ch = await get_channel()
     while await ch.wait_message():
-        channel, data = await ch.get_json()
-        event = Event(type=channel.decode(), data=data)
+        data = await ch.get_json()
+        event = Event(**data)
         await dispatch(event)
