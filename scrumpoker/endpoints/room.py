@@ -11,7 +11,7 @@ from scrumpoker.models.rooms import Room
 
 async def create_room(request: Request):
     room_id = random.randint(10000, 99999)
-    await redis.save_model(Room(id=room_id))
+    await redis.save_model(Room(id=room_id, moderator=request.session.get("session_id")))
     return RedirectResponse(f"/room/{room_id}", status_code=302)
 
 
