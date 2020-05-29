@@ -1,7 +1,6 @@
 from starlette.requests import Request
 from starlette.routing import Route
 
-
 from scrumpoker.conf import settings, templates
 
 

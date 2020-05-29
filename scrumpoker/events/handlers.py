@@ -24,6 +24,11 @@ async def on_connect(data):
 @register("disconnect")
 async def on_disconnect(data):
     logger.info(f"Disconnected: {data}")
+    room_id = data.get("room_id")
+    session_id = data.get("session_id")
+    r = await redis.read_model(Room(id=room_id))
+    r.participants.pop(session_id, None)
+    await redis.notify_model_changed(r)
 
 
 @register("reset")

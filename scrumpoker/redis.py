@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 import aioredis
@@ -8,6 +9,7 @@ from scrumpoker.events import dispatch
 from scrumpoker.models.events import Event
 
 _rc = None
+_listener = None
 _ch = None
 
 
@@ -18,10 +20,29 @@ async def get_connection():
     return _rc
 
 
+async def close_connection():
+    global _rc
+    if _rc is not None:
+        await _rc.close()
+
+
+async def get_listener():
+    global _listener
+    if _listener is None:
+        _listener = await aioredis.create_redis(settings.redis_url)
+    return _listener
+
+
+async def close_listener():
+    global _listener
+    if _listener is not None:
+        await _listener.close()
+
+
 async def get_channel():
     global _ch
     if _ch is None:
-        conn = await aioredis.create_redis(settings.redis_url)
+        conn = await get_listener()
         results = await conn.psubscribe("model_change:*")
         _ch = results[0]
     return _ch
@@ -48,8 +69,10 @@ async def notify_model_changed(instance: BaseModel):
 
 async def listen():
     ch = await get_channel()
-    while await ch.wait_message():
-        channel, data = await ch.get_json()
-        event = Event(type=channel.decode(), data=data)
-        await dispatch(event)
-
+    try:
+        while await ch.wait_message():
+            channel, data = await ch.get_json()
+            event = Event(type=channel.decode(), data=data)
+            await dispatch(event)
+    except Exception as e:
+        print(f"Listener issue: {e}")
