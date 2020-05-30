@@ -22,7 +22,8 @@ class WS(WebSocketEndpoint):
     @staticmethod
     def get_idents(websocket: WebSocket) -> Idents:
         return Idents(
-            websocket.path_params.get("room_id"), websocket.session.get("session_id")
+            websocket.path_params.get("room_id"),
+            websocket.session.get("session_id"),
         )
 
     async def on_connect(self, websocket: WebSocket) -> None:
@@ -38,7 +39,9 @@ class WS(WebSocketEndpoint):
         for result in results:
             await websocket.send_json(result)
 
-    async def on_disconnect(self, websocket: WebSocket, close_code: int) -> None:
+    async def on_disconnect(
+        self, websocket: WebSocket, close_code: int
+    ) -> None:
         idents = self.get_idents(websocket)
         connections[idents.room_id].remove(websocket)
         await dispatch(

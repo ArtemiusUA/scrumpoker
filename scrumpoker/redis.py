@@ -13,6 +13,11 @@ _ch = None
 
 
 async def get_connection():
+    """
+    Creating and accessing the main Redis connections pool singleton.
+
+    :return: connection pull
+    """
     global _rc
     if _rc is None:
         _rc = await aioredis.create_redis_pool(settings.redis_url)
@@ -20,12 +25,18 @@ async def get_connection():
 
 
 async def close_connection():
+    """Closing main Redis connections pool"""
     global _rc
     if _rc is not None:
         await _rc.close()
 
 
 async def get_listener():
+    """
+    Creating and accessing Redis listener connection used for pub/sub mode.
+
+    :return: listener connection
+    """
     global _listener
     if _listener is None:
         _listener = await aioredis.create_redis(settings.redis_url)
@@ -33,12 +44,18 @@ async def get_listener():
 
 
 async def close_listener():
+    """Closing Redis listener connection"""
     global _listener
     if _listener is not None:
         await _listener.close()
 
 
 async def get_channel():
+    """
+    Subscribing and accessing the main notifications chanel.
+
+    :return: model_change channel
+    """
     global _ch
     if _ch is None:
         conn = await get_listener()
@@ -48,11 +65,19 @@ async def get_channel():
 
 
 async def save_model(instance: BaseModel):
+    """Saving model to Redis."""
     rc = await get_connection()
-    await rc.set(f"{instance.__class__.__name__}:{instance.id}", instance.json())
+    await rc.set(
+        f"{instance.__class__.__name__}:{instance.id}", instance.json()
+    )
 
 
-async def read_model(instance: BaseModel):
+async def read_model(instance: BaseModel) -> BaseModel:
+    """
+    Reading model from Redis by id attribute from model.
+
+    :return: instance
+    """
     rc = await get_connection()
     data = await rc.get(f"{instance.__class__.__name__}:{instance.id}")
     try:
@@ -62,6 +87,7 @@ async def read_model(instance: BaseModel):
 
 
 async def notify_model_changed(instance: BaseModel):
+    """Publishing event to Redis channel."""
     rc = await get_connection()
     await rc.publish(
         consts.Redis.MODEL_CHANGE,
@@ -73,6 +99,10 @@ async def notify_model_changed(instance: BaseModel):
 
 
 async def listen():
+    """
+    Infinite listener coroutine to get events from
+    Redis channel and promote them to handlers.
+    """
     ch = await get_channel()
     while await ch.wait_message():
         data = await ch.get_json()

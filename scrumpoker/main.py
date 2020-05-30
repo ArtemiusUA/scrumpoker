@@ -16,7 +16,9 @@ from scrumpoker.middleware import SessionIDMiddleware
 def create_routes():
     routes = [
         Mount(
-            "/static", StaticFiles(directory=base_dir.joinpath("static")), name="static"
+            "/static",
+            StaticFiles(directory=base_dir.joinpath("static")),
+            name="static",
         )
     ]
     routes.extend(index.routes)
@@ -27,7 +29,9 @@ def create_routes():
 
 def create_middleware():
     middleware = list()
-    middleware.append(Middleware(SessionMiddleware, secret_key=settings.secret_key))
+    middleware.append(
+        Middleware(SessionMiddleware, secret_key=settings.secret_key)
+    )
     middleware.append(Middleware(SessionIDMiddleware))
     return middleware
 

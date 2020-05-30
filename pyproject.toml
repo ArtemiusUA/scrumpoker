@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | static
+  | templates
+  | dist
+)/
+'''

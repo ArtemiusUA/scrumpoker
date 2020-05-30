@@ -12,6 +12,12 @@ logger = logging.getLogger(__name__)
 
 @register(WSIn.CONNECT)
 async def on_connect(data: dict):
+    """
+    Event handler for new websocket connection.
+
+    Adding user to room participants if not added yet
+    and publishing notification to Redis on room update
+    """
     logger.info(f"Connected: {data}")
     room_id = data.get("room_id")
     session_id = data.get("session_id")
@@ -25,6 +31,12 @@ async def on_connect(data: dict):
 
 @register(WSIn.DISCONNECT)
 async def on_disconnect(data: dict):
+    """
+    Event handler for closed websocket connection.
+
+    Removing user from room participants
+    and publishing notification to Redis on room update
+    """
     logger.info(f"Disconnected: {data}")
     room_id = data.get("room_id")
     session_id = data.get("session_id")
@@ -35,6 +47,7 @@ async def on_disconnect(data: dict):
 
 @register(WSIn.RESET)
 async def on_reset(data: dict):
+    """Reseting participants votes in room."""
     logger.info(f"Reset: {data}")
     room_id = data.get("room_id")
     r = await redis.read_model(Room(id=room_id))
@@ -45,6 +58,7 @@ async def on_reset(data: dict):
 
 @register(WSIn.VOTE)
 async def on_vote(data: dict):
+    """Registering vote sent by participant."""
     logger.info(f"Vote: {data}")
     room_id = data.get("room_id")
     session_id = data.get("session_id")
@@ -56,6 +70,10 @@ async def on_vote(data: dict):
 
 @register(WSIn.EXPOSE)
 async def on_expose(data: dict):
+    """
+    Exposing votes of participants that normally
+    are not visible to all till moderator decision.
+    """
     logger.info(f"Expose: {data}")
     room_id = data.get("room_id")
     session_id = data.get("session_id")
@@ -66,6 +84,7 @@ async def on_expose(data: dict):
 
 @register(Redis.MODEL_CHANGE)
 async def on_model_change(data: dict):
+    """Updating connected users on room change event received from Redis pub/sup."""
     logger.info(f"model_change: {data}")
     if data.get("model") != Room.__name__:
         return

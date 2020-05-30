@@ -4,6 +4,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 
 class SessionIDMiddleware(BaseHTTPMiddleware):
+    """Adding unique uuid to each session."""
+
     async def dispatch(self, request, call_next):
         if not request.session.get("session_id"):
             request.session["session_id"] = str(uuid4())
