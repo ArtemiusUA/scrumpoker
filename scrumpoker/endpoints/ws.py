@@ -29,12 +29,14 @@ class WS(WebSocketEndpoint):
         await super().on_connect(websocket)
         ident = self.get_idents(websocket)
         connections[ident.room_id].append(websocket)
-        await dispatch(
+        results = await dispatch(
             Event(
                 type=WSIn.CONNECT,
                 data=dict(room_id=ident.room_id, session_id=ident.session_id),
             )
         )
+        for result in results:
+            await websocket.send_json(result)
 
     async def on_disconnect(self, websocket: WebSocket, close_code: int) -> None:
         idents = self.get_idents(websocket)

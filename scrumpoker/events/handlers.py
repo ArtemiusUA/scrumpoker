@@ -20,6 +20,7 @@ async def on_connect(data: dict):
         r.participants[session_id] = False
         await redis.save_model(r)
         await redis.notify_model_changed(r)
+    return Event(type=WSOut.ROOM_UPDATE, data=r.dict()).dict()
 
 
 @register(WSIn.DISCONNECT)
