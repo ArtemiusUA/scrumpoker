@@ -18,9 +18,10 @@ async def create_room(request: Request):
 
 
 async def view_room(request: Request):
-    room = await redis.read_model(Room(id=request.path_params.get("room_id")))
+    r = Room(id=request.path_params.get("room_id"))
+    await redis.read_model(r)
     return templates.TemplateResponse(
-        "room.html", {"request": request, "room": room}
+        "room.html", {"request": request, "room": r}
     )
 
 

@@ -1,4 +1,5 @@
 import json
+import logging
 
 import aioredis
 from pydantic import BaseModel
@@ -7,6 +8,7 @@ from scrumpoker.conf import settings
 from scrumpoker.events import consts, dispatch
 from scrumpoker.models.events import Event
 
+logger = logging.getLogger(__name__)
 _rc = None
 _listener = None
 _ch = None
@@ -72,7 +74,7 @@ async def save_model(instance: BaseModel):
     )
 
 
-async def read_model(instance: BaseModel) -> BaseModel:
+async def read_model(instance: BaseModel):
     """
     Reading model from Redis by id attribute from model.
 
@@ -81,9 +83,10 @@ async def read_model(instance: BaseModel) -> BaseModel:
     rc = await get_connection()
     data = await rc.get(f"{instance.__class__.__name__}:{instance.id}")
     try:
-        return instance.copy(update=json.loads(data))
-    except Exception:
-        return instance
+        for k, v in instance.__class__.parse_raw(data).dict().items():
+            setattr(instance, k, v)
+    except Exception as e:
+        logger.exception(f"Unable to load model: {e}")
 
 
 async def notify_model_changed(instance: BaseModel):
