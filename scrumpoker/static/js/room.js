@@ -1,5 +1,6 @@
 (function () {
-    let socket = new WebSocket("ws://0.0.0.0:8000/ws/" + roomId);
+    const url = (new URL(window.location));
+    let socket = new WebSocket("ws://" + url.hostname + ":" + url.port + "/ws/" + roomId);
 
     socket.onopen = function () {
         console.log("WS connected");
