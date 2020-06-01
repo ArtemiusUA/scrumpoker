@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     secret_key: str = "test"
     redis_url: str = "redis://localhost"
     debug: bool = True
+    model_ttl: int = 60 * 60 * 24
 
 
 settings = Settings()

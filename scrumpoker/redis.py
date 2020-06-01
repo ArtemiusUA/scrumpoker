@@ -69,7 +69,9 @@ async def save_model(instance: BaseModel):
     """Saving model to Redis."""
     rc = await get_connection()
     await rc.set(
-        f"{instance.__class__.__name__}:{instance.id}", instance.json()
+        f"{instance.__class__.__name__}:{instance.id}",
+        instance.json(),
+        expire=settings.model_ttl,
     )
 
 
