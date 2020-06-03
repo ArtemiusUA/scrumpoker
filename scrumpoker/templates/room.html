@@ -9,5 +9,5 @@
 <script>
     const roomId = {{ room.id }}
 </script>
-<script src="/static/js/room.js"></script>
+<script src="{{ url_for('static', path='/js/room.js') }}"></script>
 {% endblock %}

@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Scrum poker{% endblock %}</title>
+    {% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/mini-default.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/main.css') }}">
+    {% endblock %}
 </head>
 <body>
 {% block content %}
