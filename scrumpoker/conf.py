@@ -15,3 +15,13 @@ class Settings(BaseSettings):
 settings = Settings()
 base_dir = Path(__file__).parent
 templates = Jinja2Templates(directory=base_dir.joinpath("templates"))
+
+
+def a_la_fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
+
+
+votes_sequence = sorted(set(a_la_fib(13)))

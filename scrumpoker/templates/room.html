@@ -1,8 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-{{ super() }}
-<h1>{{ room.id }}</h1>
-<div id="content"></div>
+<div class="container center-aligned">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Room: {{ room.id }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <h5>Chose estimate:</h5>
+    </div>
+    <div class="row">
+        {% for vote in votes_sequence %}
+        <div class="col-lg-1">
+            <a href="#" class="button large vote-button">{{ vote }}</a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <h5>Voting results:</h5>
+    </div>
+    <div class="row center-aligned">
+        {% for participant in room.participants %}
+        <div class="col-lg-1">
+            <div class="button large vote-button voted-button">X</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row center-aligned">
+        <div class="col-lg-12">
+            <a href="#" class="button large secondary">Reset</a>
+            <a href="#" class="button large primary">Show</a>
+        </div>
+    </div>
+    <div id="room-state"></div>
+</div>
 {% endblock %}
 {% block js %}
 {{ super() }}

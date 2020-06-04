@@ -17,7 +17,7 @@
 
     socket.onmessage = function (event) {
         console.log("WS message: " + event.data);
-        document.getElementById("content").innerHTML = event.data;
+        document.getElementById("room-state").innerHTML = event.data;
     };
 
     socket.onerror = function (error) {

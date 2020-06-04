@@ -1,7 +1,16 @@
 .container {
-    max-width: 700px;
+    max-width: 800px;
 }
 
 .center-aligned {
     text-align: center;
+}
+
+.vote-button {
+    width: 25px;
+}
+
+.voted-button {
+    background-color: #ffca28;
+    border-color:  #e8b825;
 }

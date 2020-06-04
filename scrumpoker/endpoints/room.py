@@ -5,7 +5,7 @@ from starlette.responses import RedirectResponse
 from starlette.routing import Route
 
 from scrumpoker import redis
-from scrumpoker.conf import templates
+from scrumpoker.conf import templates, votes_sequence
 from scrumpoker.models.rooms import Room
 
 
@@ -21,7 +21,7 @@ async def view_room(request: Request):
     r = Room(id=request.path_params.get("room_id"))
     await redis.read_model(r)
     return templates.TemplateResponse(
-        "room.html", {"request": request, "room": r}
+        "room.html", {"request": request, "room": r, "votes_sequence": votes_sequence}
     )
 
 
