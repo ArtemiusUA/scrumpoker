@@ -10,7 +10,13 @@
     width: 25px;
 }
 
-.voted-button {
+.voting-result-item {
     background-color: #ffca28;
     border-color:  #e8b825;
+    width: 53px;
+    padding: 13px 0 13px 0;
+}
+
+.voting-results-items {
+    min-height: 160px!important;;
 }
