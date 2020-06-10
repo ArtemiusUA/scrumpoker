@@ -1,44 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container center-aligned">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>Room: {{ room.id }}</h1>
+    <div id="room" class="container center-aligned">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>Room: {{ room.id }}</h1>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <h5>Chose estimate:</h5>
-    </div>
-    <div class="row">
-        {% for vote in votes_sequence %}
-        <div class="col-lg-1">
-            <a href="#" class="button large vote-button">{{ vote }}</a>
+        <div class="row">
+            <h5>Chose estimate:</h5>
         </div>
-        {% endfor %}
-    </div>
-    <div class="row">
-        <h5>Voting results:</h5>
-    </div>
-    <div class="row center-aligned voting-results-items">
-        {% for participant in room.participants %}
-        <div class="col-lg-1">
-            <div class="card voting-result-item">X</div>
+        <div class="row">
+            {% for points in votes_sequence %}
+                <div class="col-lg-1">
+                    <a href="" class="button large vote-button" v-on:click.prevent="vote({{ points }})" >{{ points }}</a>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="row center-aligned">
-        <div class="col-lg-12">
-            <a href="#" class="button large secondary">Reset</a>
-            <a href="#" class="button large primary">Show</a>
+        <div class="row">
+            <h5>Voting results:</h5>
         </div>
+        <div class="row center-aligned voting-results-items">
+            {% raw %}
+                <div class="col-lg-1" v-for="(item, key, index) in state.participants">
+                    <div class="card voting-result-item" v-on:click="vote()">
+                        {{ renderResult(item) }}
+                    </div>
+                </div>
+            {% endraw %}
+        </div>
+        <div class="row center-aligned">
+            <div class="col-lg-12">
+                <a href="#" class="button large secondary">Reset</a>
+                <a href="#" class="button large primary">Show</a>
+            </div>
+        </div>
+        <div id="room-state"></div>
     </div>
-    <div id="room-state"></div>
-</div>
 {% endblock %}
 {% block js %}
-{{ super() }}
-<script>
-    const roomId = {{ room.id }}
-</script>
-<script src="{{ url_for('static', path='/js/room.js') }}"></script>
+    {{ super() }}
+    <script>
+        const roomId ={{ room.id }}
+    </script>x
+    <script src="{{ url_for('static', path='/js/room.js') }}"></script>
 {% endblock %}

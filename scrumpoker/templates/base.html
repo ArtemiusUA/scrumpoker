@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <title>{% block title %}Scrum poker{% endblock %}</title>
     {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/mini-default.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='/css/mini-default.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='/css/main.css') }}">
     {% endblock %}
 </head>
 <body>
 {% block header %}
-<div class="container center-aligned">
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12">
-            <h1><a href="/">Scrum poker</a></h1>
-            <h4>App for estimating tasks in agile projects</h4>
+    <div class="container center-aligned">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <h1><a href="/">Scrum poker</a></h1>
+                <h4>App for estimating tasks in agile projects</h4>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 {% block content %}
 {% endblock %}
 {% block js %}
+    <script src="{{ url_for('static', path='/js/vendor/vue.js') }}"></script>
 {% endblock %}
 </body>
 </html>
