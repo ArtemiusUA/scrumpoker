@@ -1,46 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
-    <div id="room" class="container center-aligned">
-        <div class="row">
-            <div class="col-sm-12">
-                <h1>Room: {{ room.id }}</h1>
-            </div>
+    {% raw %}
+    <div id="roomApp" class="container center-aligned">
+        <div class="loader" v-show="!isReady">
+            <div class="lds-dual-ring"></div>
         </div>
-        <div class="row">
-            <h5>Chose estimate:</h5>
-        </div>
-        <div class="row">
-            {% for points in votes_sequence %}
-                <div class="col-lg-1">
-                    <a href="" class="button large vote-button" v-on:click.prevent="vote({{ points }})" >{{ points }}</a>
+        <div class="room" v-show="isReady" style="display: None;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>Room: {{ state.id }}</h1>
                 </div>
-            {% endfor %}
-        </div>
-        <div class="row">
-            <h5>Voting results:</h5>
-        </div>
-        <div class="row center-aligned voting-results-items">
-            {% raw %}
+            </div>
+            <div class="row">
+                <h5>Chose estimate:</h5>
+            </div>
+            <div class="row">
+                <div class="col-lg-1" v-for="points in state.votes_sequence">
+                    <a href="" class="button large vote-button" v-on:click.prevent="vote(points)">{{ points }}</a>
+                </div>
+            </div>
+            <div class="row">
+                <h5>Voting results:</h5>
+            </div>
+            <div class="row center-aligned voting-results-items">
                 <div class="col-lg-1" v-for="(item, key, index) in state.participants">
                     <div class="card voting-result-item" v-on:click="vote()">
                         {{ renderResult(item) }}
                     </div>
                 </div>
-            {% endraw %}
-        </div>
-        <div class="row center-aligned">
-            <div class="col-lg-12">
-                <a href="#" class="button large secondary">Reset</a>
-                <a href="#" class="button large primary">Show</a>
+            </div>
+            <div class="row center-aligned">
+                <div class="col-lg-12">
+                    <a href="#" class="button large secondary">Reset</a>
+                    <a href="#" class="button large primary">Show</a>
+                </div>
             </div>
         </div>
-        <div id="room-state"></div>
     </div>
+    {% endraw %}
 {% endblock %}
 {% block js %}
     {{ super() }}
     <script>
-        const roomId ={{ room.id }}
+        const roomId =
+        {{ room.id }}
     </script>x
     <script src="{{ url_for('static', path='/js/room.js') }}"></script>
 {% endblock %}

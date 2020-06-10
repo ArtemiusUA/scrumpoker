@@ -3,7 +3,7 @@
     let socket = new WebSocket("ws://" + url.hostname + ":" + url.port + "/ws/" + roomId);
 
     const roomApp = new Vue({
-        el: "#room",
+        el: "#roomApp",
         data: {
             state: {
                 id: "",
@@ -22,7 +22,7 @@
                     return result;
                 }
             },
-            isExposed: result => result === "true",
+            isExposed: result => (result !== true && result !== false),
             vote: function (points) {
                 socket.send(JSON.stringify({
                     type: "vote",
@@ -31,8 +31,12 @@
                     }
                 }))
             }
+        },
+        computed: {
+            isReady: function() {
+                return Boolean(this.state.id)
+            }
         }
-
     });
 
 

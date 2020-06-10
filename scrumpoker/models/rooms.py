@@ -9,6 +9,7 @@ class Room(BaseModel):
     participants: dict = {}
     is_exposed: bool = False
     moderator: str = ""
+    votes_sequence: list = []
 
     @staticmethod
     def generate_id():
