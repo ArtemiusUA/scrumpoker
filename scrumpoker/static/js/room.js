@@ -30,6 +30,18 @@
                         points,
                     }
                 }))
+            },
+            reset: function () {
+                socket.send(JSON.stringify({
+                    type: "reset",
+                    data: {}
+                }))
+            },
+            expose: function () {
+                socket.send(JSON.stringify({
+                    type: "expose",
+                    data: {}
+                }))
             }
         },
         computed: {

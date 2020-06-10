@@ -101,11 +101,16 @@ async def on_model_change(data: dict):
     await redis.read_model(r)
     room_connections = connections.get(r.id)
     for c in room_connections:
+        # copy of the state with exposed point for owner
+        state = r.copy()
         if not r.is_exposed:
-            # copy of the state with exposed point for owner
-            state = r.copy()
             state.participants = {
-                k: v if k == c.session.get("session_id") else bool(v)
+                k: v if k == c.session.get("session_id") and v is not None else bool(v)
+                for k, v in r.participants.items()
+            }
+        else:
+            state.participants = {
+                k: v if v is not None else bool(v)
                 for k, v in r.participants.items()
             }
         await c.send_json(Event(type=WSOut.ROOM_UPDATE, data=state.dict()).dict())
