@@ -37,7 +37,7 @@ class WS(WebSocketEndpoint):
             )
         )
         for result in results:
-            await websocket.send_json(result)
+            await websocket.send_json(result.dict())
 
     async def on_disconnect(
         self, websocket: WebSocket, close_code: int
@@ -64,7 +64,7 @@ class WS(WebSocketEndpoint):
         event.data["session_id"] = idents.session_id
         results = await dispatch(event)
         for result in results:
-            await websocket.send_json(result)
+            await websocket.send_json(result.dict())
 
 
 routes = [

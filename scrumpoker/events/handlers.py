@@ -2,10 +2,9 @@ import logging
 
 from scrumpoker import redis
 from scrumpoker.endpoints.ws import connections
+from scrumpoker.events.consts import Redis, WSIn, WSOut
+from scrumpoker.events.dispatching import moderator_only, register
 from scrumpoker.models import Event, Room
-
-from . import register
-from .consts import Redis, WSIn, WSOut
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ async def on_connect(data: dict):
         r.participants[session_id] = False
         await redis.save_model(r)
         await redis.notify_model_changed(r)
-    return Event(type=WSOut.ROOM_UPDATE, data=r.dict()).dict()
+    return Event(type=WSOut.ROOM_UPDATE, data=r.dict())
 
 
 @register(WSIn.DISCONNECT)
@@ -49,6 +48,7 @@ async def on_disconnect(data: dict):
 
 
 @register(WSIn.RESET)
+@moderator_only
 async def on_reset(data: dict):
     """Reseting participants votes in room."""
     logger.info(f"Reset: {data}")
@@ -76,6 +76,7 @@ async def on_vote(data: dict):
 
 
 @register(WSIn.EXPOSE)
+@moderator_only
 async def on_expose(data: dict):
     """
     Exposing votes of participants that normally
@@ -105,7 +106,9 @@ async def on_model_change(data: dict):
         state = r.copy()
         if not r.is_exposed:
             state.participants = {
-                k: v if k == c.session.get("session_id") and v is not None else bool(v)
+                k: v
+                if k == c.session.get("session_id") and v is not None
+                else bool(v)
                 for k, v in r.participants.items()
             }
         else:
@@ -113,4 +116,6 @@ async def on_model_change(data: dict):
                 k: v if v is not None else bool(v)
                 for k, v in r.participants.items()
             }
-        await c.send_json(Event(type=WSOut.ROOM_UPDATE, data=state.dict()).dict())
+        await c.send_json(
+            Event(type=WSOut.ROOM_UPDATE, data=state.dict()).dict()
+        )

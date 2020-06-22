@@ -13,6 +13,7 @@ class WSOut:
 
     ROOM_UPDATE = "room_update"
     VALIDATION_ERROR = "validation_error"
+    PERMISSIONS_ERROR = "permissions_error"
 
 
 class Redis:
