@@ -10,7 +10,8 @@
                 participants: {},
                 is_exposed: false,
                 moderator: "",
-            }
+            },
+            isModerator: isModerator
         },
         methods: {
             renderResult: function (result) {

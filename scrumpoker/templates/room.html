@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row center-aligned">
+            <div class="row center-aligned" v-show="isModerator">
                 <div class="col-lg-12">
                     <a href="#" class="button large secondary" v-on:click.prevent="reset()">Reset</a>
                     <a href="#" class="button large primary" v-on:click.prevent="expose()">Expose</a>
@@ -42,8 +42,8 @@
 {% block js %}
     {{ super() }}
     <script>
-        const roomId =
-        {{ room.id }}
+        const roomId = {{ room.id }}
+        const isModerator = {{ is_moderator|lower }}
     </script>
     <script src="{{ url_for('static', path='/js/room.js') }}"></script>
 {% endblock %}

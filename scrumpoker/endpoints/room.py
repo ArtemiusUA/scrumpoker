@@ -24,8 +24,9 @@ async def create_room(request: Request):
 async def view_room(request: Request):
     r = Room(id=request.path_params.get("room_id"))
     await redis.read_model(r)
+    session_id = request.session.get("session_id")
     return templates.TemplateResponse(
-        "room.html", {"request": request, "room": r},
+        "room.html", {"request": request, "room": r, "is_moderator": session_id == r.moderator},
     )
 
 
