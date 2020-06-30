@@ -26,7 +26,12 @@ async def view_room(request: Request):
     await redis.read_model(r)
     session_id = request.session.get("session_id")
     return templates.TemplateResponse(
-        "room.html", {"request": request, "room": r, "is_moderator": session_id == r.moderator},
+        "room.html",
+        {
+            "request": request,
+            "room": r,
+            "is_moderator": session_id == r.moderator,
+        },
     )
 
 
